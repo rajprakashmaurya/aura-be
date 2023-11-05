@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 // Signup
-exports.signup = async (req, res) => {
+exports.signup = async (req, res, next) => {
   try {
     const {
       hospitalName,
@@ -11,15 +11,15 @@ exports.signup = async (req, res) => {
       password,
       cfPassword,
       phoneNumber,
-      addresses,
       address,
       city,
       state,
       pincode,
-      hospitalReDate,
-      hospitalReNum,
-      emWdNum,
+      hosRegDate,
+      hosResNum,
+      emgWrdNum,
       certificate,
+      numAmb,
     } = req.body;
 
     // Check if the username already exists
@@ -48,22 +48,23 @@ exports.signup = async (req, res) => {
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedCfPassword = await bcrypt.hash(cfPassword, 10);
     // Save the user to the database
 
     const user = await new userModel({
       hospitalName,
       email,
       password: hashedPassword,
-      cfPassword,
+      cfPassword: hashedCfPassword,
       phoneNumber,
-      addresses,
       address,
       city,
       state,
       pincode,
-      hospitalReDate,
-      hospitalReNum,
-      emWdNum,
+      hosRegDate,
+      hosResNum,
+      emgWrdNum,
+      numAmb,
       certificate,
     }).save();
     await res.status(201).send({
@@ -75,6 +76,7 @@ exports.signup = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
     res.json({ token });
+    next();
   } catch (error) {
     res.status(500).json({ error: "Error signup up", message: error.message });
   }
@@ -83,7 +85,7 @@ exports.signup = async (req, res) => {
 // Login
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, hospitalName, cfPassword } = req.body;
     //validation
     if (!email || !password) {
       return res.status(404).send({
@@ -106,6 +108,7 @@ exports.login = async (req, res) => {
         message: "Invalid Password",
       });
     }
+
     //token
     const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -118,7 +121,7 @@ exports.login = async (req, res) => {
         hospitalName: user.hospitalName,
         email: user.email,
         phone: user.phone,
-        addresses: user.addresses,
+        address: user.address,
         city: user.city,
         state: user.state,
         pincode: user.pincode,

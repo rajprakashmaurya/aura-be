@@ -19,34 +19,36 @@ const userSchema = new Schema(
     },
     cfPassword: {
       type: String,
-      required: true,
     },
     phoneNumber: {
       type: Number,
       required: true,
     },
-    addresses: {
-      adddress: {
-        type: String,
-      },
-      city: {
-        type: String,
-      },
-      state: {
-        type: String,
-      },
-      pincode: {
-        type: Number,
-      },
-    },
-    hospitalReDate: {
+
+    address: {
       type: String,
     },
-    hospitalReNum: {
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    pincode: {
+      type: Number,
+    },
+
+    hosRegDate: {
+      type: String,
+    },
+    hosResNum: {
       type: String,
     },
     emWdNum: {
       type: Number,
+    },
+    numAmb: {
+      type: String,
     },
   },
   { timestamps: true }
