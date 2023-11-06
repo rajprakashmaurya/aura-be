@@ -51,7 +51,7 @@ exports.signup = async (req, res, next) => {
     const hashedCfPassword = await bcrypt.hash(cfPassword, 10);
     // Save the user to the database
 
-    const user = await new userModel({
+    const user = await userModel.create({
       hospitalName,
       email,
       password: hashedPassword,
@@ -66,17 +66,17 @@ exports.signup = async (req, res, next) => {
       emgWrdNum,
       numAmb,
       certificate,
-    }).save();
-    await res.status(201).send({
+    });
+
+    return res.status(201).send({
       success: true,
       message: "User Register Successfully",
       user,
     });
     // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    // const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-    res.json({ token });
-    next();
+    // return res.json({ token });
   } catch (error) {
     res.status(500).json({ error: "Error signup up", message: error.message });
   }
