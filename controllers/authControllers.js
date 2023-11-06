@@ -162,3 +162,31 @@ exports.getAllUser = async (req, res) => {
       .json({ error: "Error fetching users", message: error.message });
   }
 };
+
+exports.getSearchedUsers = async (req, res) => {
+  try {
+    const { query } = req;
+    const searchTerm = query.searchTerm || "";
+
+    if (!searchTerm) {
+      return res.status(400).json({ message: "Search term is required" });
+    }
+
+    // Search for users with hospitalName containing the searchTerm
+    const filteredUsers = await userModel.find({
+      hospitalName: { $regex: new RegExp(searchTerm, "i") }, // Case-insensitive search
+    });
+
+    if (filteredUsers.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No users found with the given search term" });
+    }
+
+    res.status(200).json({ users: filteredUsers });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error fetching users", message: error.message });
+  }
+};

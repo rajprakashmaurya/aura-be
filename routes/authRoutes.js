@@ -11,6 +11,9 @@ userRoute.post("/login", createUser.login);
 //get all user
 userRoute.get("/user", createUser.getAllUser);
 
+//get search users
+userRoute.get("/search", createUser.getSearchedUsers);
+
 // userRoute.get("/router", (req, res) => {
 //   res.status(200).json({
 //     message: "User router",
